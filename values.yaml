@@ -1,0 +1,88 @@
+kongdp:
+	image:
+	   repository: kong/kong-gateway
+	   tag: "3.1"
+	   pullPolicy: IfNotPresent
+
+	env:
+	  database: "off"
+	  role: data_plane
+	  # Communication to push config to data-plane (wss)
+	  cluster_control_plane: kongcp-kong-cluster.cp.svc.cluster.local:8005
+	  #wss.stargate.starsweb.io
+	  # Communication to push vitals to control plane
+	  cluster_telemetry_endpoint: kongcp-kong-clustertelemetry.cp.svc.cluster.local:8006
+	  # Certificates for cluster communication
+	  lua_ssl_trusted_certificate: /etc/secrets/kong-dp-cert/tls.crt
+	  untrusted_lua_sandbox_requires: cjson
+	  lua_ssl_verify_depth: 2
+	  log_level: debug
+	  opentelemetry_tracing: all
+	  opentelemetry_tracing_sampling_rate: 1
+	  vitals: on
+
+	  cluster_mtls: "pki"
+	  cluster_cert: /etc/secrets/kong-dp-cert/tls.crt
+	  cluster_cert_key: /etc/secrets/kong-dp-cert/tls.key
+	  cluster_ca_cert: /etc/secrets/kong-dp-cert/ca.crt
+	  cluster_server_name: wss.stargate.starsweb.io
+
+	secretVolumes:
+	  - kong-dp-cert
+	  # - kong-ca-cert
+	  # - kong-ssl-cert
+
+	proxy:
+	  enabled: true
+	  type: LoadBalancer
+	  
+	  http:
+	    enabled: true
+	    servicePort: 8000
+	    containerPort: 8000
+	  tls:
+	    enabled: false
+	    servicePort: 8443
+	    containerPort: 8443
+	    parameters:
+	      - http2
+	  labels:
+	    enable-metrics: "true"
+
+	admin:
+	  enabled: false
+
+	portal:
+	  enabled: false
+
+	portalapi:
+	  enabled: false
+
+	manager:
+	  enabled: false
+
+	ingressController:
+	  enabled: false
+
+	enterprise:
+	  enabled: true
+	  #license_secret: kong-enterprise-license
+	  vitals:
+	    enabled: true
+
+	status:
+	  enabled: true
+	  http:
+	    enabled: true
+	    containerPort: 8100
+	  tls:
+	    containerPort: 8543
+	    enabled: false
+
+	# only if pod not enough to initiate
+	readinessProbe:
+	  initialDelaySeconds: 100
+
+	livenessProbe:
+	  initialDelaySeconds: 100
+
