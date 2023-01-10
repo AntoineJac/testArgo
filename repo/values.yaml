@@ -1,5 +1,8 @@
 kongdp:
   namespace: dp
+  deployment:
+    serviceAccount:
+      create: false
   image:
      repository: kong/kong-gateway
      tag: "3.1"
@@ -89,6 +92,9 @@ kongdp:
 
 kongcp:
   namespace: cp
+  deployment:
+    serviceAccount:
+      create: false
   env:
     database: "postgres"
     pg_host: kongpg-postgresql.pg.svc.cluster.local
