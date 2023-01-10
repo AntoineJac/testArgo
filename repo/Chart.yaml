@@ -4,6 +4,6 @@ type: application
 version: 1.0.0
 appVersion: "1.0.0"
 dependencies:
-- name: kongdp
+- name: kong
   version: 2.8.0
   repository: https://charts.konghq.com
