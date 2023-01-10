@@ -1,4 +1,5 @@
 kongdp:
+  namespace: dp
   image:
      repository: kong/kong-gateway
      tag: "3.1"
@@ -87,6 +88,7 @@ kongdp:
     initialDelaySeconds: 100
 
 kongcp:
+  namespace: cp
   env:
     database: "postgres"
     pg_host: kongpg-postgresql.pg.svc.cluster.local
